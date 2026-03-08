@@ -1,3 +1,38 @@
-h1{
-    color: blue;
+/* Importamos tipografías similares a Akkü de Google Fonts */
+/* Importamos tipografías de Akkü */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Questrial&display=swap');
+
+body {
+    background-color: #f4f4f4; /* El fondo clarito que pediste */
+    color: #000000; /* Letras en NEGRO para que se vean bien */
+    font-family: 'Questrial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+main {
+    text-align: center;
+    background-color: #ffffff; /* Caja blanca para que resalte del fondo */
+    padding: 50px;
+    border-radius: 15px;
+    border: 2px solid #5e5e5e; /* El color de Akkü en el borde */
+    max-width: 600px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h1 {
+    font-family: 'Playfair Display', serif; /* Estilo elegante de tu marca */
+    color: #000000; /* Título en Negro */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+p {
+    color: #000000; /* Párrafos en Negro */
+    line-height: 1.6;
+    font-weight: 500;
 }
