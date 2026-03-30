@@ -1,38 +1,87 @@
-/* Importamos tipografías similares a Akkü de Google Fonts */
-/* Importamos tipografías de Akkü */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Questrial&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Questrial&display=swap');
 
 body {
-    background-color: #f4f4f4; /* El fondo clarito que pediste */
-    color: #000000; /* Letras en NEGRO para que se vean bien */
+    background-color: #f4f4f4;
+    color: #000;
     font-family: 'Questrial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 20px;
 }
 
 main {
-    text-align: center;
-    background-color: #ffffff; /* Caja blanca para que resalte del fondo */
-    padding: 50px;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px;
     border-radius: 15px;
-    border: 2px solid #5e5e5e; /* El color de Akkü en el borde */
-    max-width: 600px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border: 1px solid #5e5e5e;
 }
 
 h1 {
-    font-family: 'Playfair Display', serif; /* Estilo elegante de tu marca */
-    color: #000000; /* Título en Negro */
+    font-family: 'Playfair Display', serif;
+    text-align: center;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
 }
 
-p {
-    color: #000000; /* Párrafos en Negro */
-    line-height: 1.6;
-    font-weight: 500;
+.grid-servicios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.tarjeta-servicio {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    background: #fafafa;
+}
+
+button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Questrial', sans-serif;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #444;
+}
+
+#carrito {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+#lista-carrito {
+    padding: 0;
+}
+
+#lista-carrito li {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-borrar {
+    background: none;
+    color: red;
+    padding: 0;
+    font-size: 14px;
+}
+
+#detalle-precio {
+    margin: 15px 0;
+    font-size: 1.1rem;
 }

@@ -1,65 +1,96 @@
-// 1. Función constructora de Servicios (Nivel Pro)
-function Servicio(nombre, precio) {
-    this.nombre = nombre;
-    this.precio = parseFloat(precio);
+// 1. Clase para Servicios
+class Servicio {
+    constructor(id, nombre, precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = parseFloat(precio);
+    }
 }
 
-// 2. Tu catálogo de servicios de Akkü Studio Lab
+// 2. Catálogo de Akkü Studio Lab
 const catalogo = [
-    new Servicio("Emailling Estratégico", 2500),
-    new Servicio("Diseño UX/UI", 5000),
-    new Servicio("Data Strategy", 4500)
+    new Servicio(1, "Emailling Estratégico", 2500),
+    new Servicio(2, "Diseño UX/UI", 5000),
+    new Servicio(3, "Data Strategy", 4500),
+    new Servicio(4, "AI Automation", 6000)
 ];
 
-const carrito = [];
+// 3. Recuperar carrito de LocalStorage (Uso de JSON)
+let carrito = JSON.parse(localStorage.getItem("carrito_akku")) || [];
 
-function iniciarSimulador() {
-    alert("Bienvenido a la plataforma de servicios de Akkü Studio Lab 🚀");
-    
-    let mensajeMenu = "¿Qué servicio desea cotizar? \n";
-    catalogo.forEach((serv, index) => {
-        mensajeMenu += `${index + 1}. ${serv.nombre} ($${serv.precio}) \n`;
+// Captura de elementos del DOM
+const contenedorServicios = document.getElementById("contenedor-servicios");
+const listaCarrito = document.getElementById("lista-carrito");
+const precioTotal = document.getElementById("precio-total");
+const btnVaciar = document.getElementById("btn-vaciar");
+
+// 4. Función para mostrar los servicios en el HTML
+function renderizarServicios() {
+    contenedorServicios.innerHTML = ""; // Limpiar por seguridad
+    catalogo.forEach(servicio => {
+        const div = document.createElement("div");
+        div.classList.add("tarjeta-servicio");
+        div.innerHTML = `
+            <h3>${servicio.nombre}</h3>
+            <p>$${servicio.precio}</p>
+            <button class="btn-agregar" data-id="${servicio.id}">Agregar</button>
+        `;
+        contenedorServicios.appendChild(div);
     });
-    mensajeMenu += "Escriba el número o 'ESC' para terminar.";
 
-    let seleccion = prompt(mensajeMenu);
-
-    // Corregimos el ESC para que no falle nunca
-    while (seleccion !== null && seleccion.toUpperCase() !== "ESC") {
-        let indice = parseInt(seleccion) - 1;
-
-        if (catalogo[indice]) {
-            carrito.push(catalogo[indice]);
-            alert(`Agregado: ${catalogo[indice].nombre}`);
-            console.log("Servicios en cotización:", carrito);
-        } else {
-            alert("Opción no válida. Por favor, elija un número del menú.");
-        }
-        
-        seleccion = prompt(mensajeMenu);
-    }
-
-    finalizarCotizacion();
+    // Eventos para los botones de agregar
+    const botones = document.querySelectorAll(".btn-agregar");
+    botones.forEach(boton => {
+        boton.addEventListener("click", (e) => {
+            const id = parseInt(e.target.getAttribute("data-id"));
+            agregarAlCarrito(id);
+        });
+    });
 }
 
-function finalizarCotizacion() {
-    if (carrito.length > 0) {
-        let total = 0;
-        for (const item of carrito) {
-            total += item.precio;
-        }
+// 5. Lógica del Carrito
+function agregarAlCarrito(id) {
+    const servicio = catalogo.find(s => s.id === id);
+    carrito.push(servicio);
+    actualizarInterfaz();
+}
 
-        // Condicional de descuento por volumen de servicios
-        if (total > 8000) {
-            let conDescuento = total * 0.85; // 15% de descuento en servicios premium
-            alert(`Total Akkü Studio: $${total}. \n¡Bonificación aplicada! Total final: $${conDescuento}`);
-        } else {
-            alert(`El total de su cotización es: $${total}`);
-        }
+function eliminarDelCarrito(index) {
+    carrito.splice(index, 1);
+    actualizarInterfaz();
+}
+
+function actualizarInterfaz() {
+    // Dibujar el carrito en el HTML
+    listaCarrito.innerHTML = "";
+    carrito.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <span>${item.nombre} - $${item.precio}</span>
+            <button class="btn-borrar" onclick="eliminarDelCarrito(${index})">❌</button>
+        `;
+        listaCarrito.appendChild(li);
+    });
+
+    // Calcular total y aplicar descuento (Lógica de Negocio)
+    const totalBase = carrito.reduce((acc, s) => acc + s.precio, 0);
+    if (totalBase > 8000) {
+        const totalConDescuento = totalBase * 0.85;
+        precioTotal.innerHTML = `Subtotal: $${totalBase} <br> <strong>Total con Bonificación (15%): $${totalConDescuento.toFixed(2)}</strong>`;
     } else {
-        alert("No se seleccionaron servicios. ¡Gracias por visitar Akkü!");
+        precioTotal.innerText = `Total: $${totalBase}`;
     }
+
+    // Guardar en Storage (Uso de JSON)
+    localStorage.setItem("carrito_akku", JSON.stringify(carrito));
 }
 
-iniciarSimulador();
+// 6. Evento para vaciar
+btnVaciar.addEventListener("click", () => {
+    carrito = [];
+    actualizarInterfaz();
+});
 
+// Inicialización
+renderizarServicios();
+actualizarInterfaz();
