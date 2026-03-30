@@ -1,4 +1,4 @@
-// 1. Clase para Servicios
+// 1. Clase Servicio
 class Servicio {
     constructor(id, nombre, precio) {
         this.id = id;
@@ -7,90 +7,99 @@ class Servicio {
     }
 }
 
-// 2. Catálogo de Akkü Studio Lab
+// 2. Catálogo
 const catalogo = [
-    new Servicio(1, "Emailling Estratégico", 2500),
+    new Servicio(1, "Emailing Estratégico", 2500),
     new Servicio(2, "Diseño UX/UI", 5000),
     new Servicio(3, "Data Strategy", 4500),
     new Servicio(4, "AI Automation", 6000)
 ];
 
-// 3. Recuperar carrito de LocalStorage (Uso de JSON)
+// 3. LocalStorage
 let carrito = JSON.parse(localStorage.getItem("carrito_akku")) || [];
 
-// Captura de elementos del DOM
+// 4. DOM
 const contenedorServicios = document.getElementById("contenedor-servicios");
 const listaCarrito = document.getElementById("lista-carrito");
 const precioTotal = document.getElementById("precio-total");
 const btnVaciar = document.getElementById("btn-vaciar");
 
-// 4. Función para mostrar los servicios en el HTML
+// 5. Renderizar servicios
 function renderizarServicios() {
-    contenedorServicios.innerHTML = ""; // Limpiar por seguridad
+    contenedorServicios.innerHTML = "";
+
     catalogo.forEach(servicio => {
         const div = document.createElement("div");
         div.classList.add("tarjeta-servicio");
+
+        const boton = document.createElement("button");
+        boton.textContent = "Agregar";
+        boton.addEventListener("click", () => agregarAlCarrito(servicio.id));
+
         div.innerHTML = `
             <h3>${servicio.nombre}</h3>
             <p>$${servicio.precio}</p>
-            <button class="btn-agregar" data-id="${servicio.id}">Agregar</button>
         `;
-        contenedorServicios.appendChild(div);
-    });
 
-    // Eventos para los botones de agregar
-    const botones = document.querySelectorAll(".btn-agregar");
-    botones.forEach(boton => {
-        boton.addEventListener("click", (e) => {
-            const id = parseInt(e.target.getAttribute("data-id"));
-            agregarAlCarrito(id);
-        });
+        div.appendChild(boton);
+        contenedorServicios.appendChild(div);
     });
 }
 
-// 5. Lógica del Carrito
+// 6. Agregar al carrito
 function agregarAlCarrito(id) {
     const servicio = catalogo.find(s => s.id === id);
     carrito.push(servicio);
     actualizarInterfaz();
 }
 
+// 7. Eliminar
 function eliminarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarInterfaz();
 }
 
+// 8. Actualizar interfaz
 function actualizarInterfaz() {
-    // Dibujar el carrito en el HTML
     listaCarrito.innerHTML = "";
+
     carrito.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `
-            <span>${item.nombre} - $${item.precio}</span>
-            <button class="btn-borrar" onclick="eliminarDelCarrito(${index})">❌</button>
-        `;
+
+        const span = document.createElement("span");
+        span.textContent = `${item.nombre} - $${item.precio}`;
+
+        const botonEliminar = document.createElement("button");
+        botonEliminar.textContent = "❌";
+        botonEliminar.classList.add("btn-borrar");
+        botonEliminar.addEventListener("click", () => eliminarDelCarrito(index));
+
+        li.appendChild(span);
+        li.appendChild(botonEliminar);
         listaCarrito.appendChild(li);
     });
 
-    // Calcular total y aplicar descuento (Lógica de Negocio)
     const totalBase = carrito.reduce((acc, s) => acc + s.precio, 0);
+
     if (totalBase > 8000) {
         const totalConDescuento = totalBase * 0.85;
-        precioTotal.innerHTML = `Subtotal: $${totalBase} <br> <strong>Total con Bonificación (15%): $${totalConDescuento.toFixed(2)}</strong>`;
+        precioTotal.innerHTML = `
+            Subtotal: $${totalBase} <br>
+            <strong>Total con Bonificación (15%): $${totalConDescuento.toFixed(2)}</strong>
+        `;
     } else {
-        precioTotal.innerText = `Total: $${totalBase}`;
+        precioTotal.textContent = `Total: $${totalBase}`;
     }
 
-    // Guardar en Storage (Uso de JSON)
     localStorage.setItem("carrito_akku", JSON.stringify(carrito));
 }
 
-// 6. Evento para vaciar
+// 9. Vaciar carrito
 btnVaciar.addEventListener("click", () => {
     carrito = [];
     actualizarInterfaz();
 });
 
-// Inicialización
+// 10. Inicializar
 renderizarServicios();
 actualizarInterfaz();
