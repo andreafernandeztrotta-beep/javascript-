@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nombre": "Estrategia Growth Marketing",
+        "precio": 12000,
+        "descripcion": "Optimización de embudos y experimentación."
+    },
+    {
+        "id": 2,
+        "nombre": "Data Science & Analítica",
+        "precio": 15000,
+        "descripcion": "Modelado de datos y visualización avanzada."
+    },
+    {
+        "id": 3,
+        "nombre": "Auditoría UX/UI",
+        "precio": 8000,
+        "descripcion": "Análisis de usabilidad y mejora de experiencia."
+    },
+    {
+        "id": 4,
+        "nombre": "Automatización IT",
+        "precio": 10000,
+        "descripcion": "Integración de flujos de trabajo con IA."
+    }
+]

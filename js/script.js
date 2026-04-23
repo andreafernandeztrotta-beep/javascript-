@@ -1,4 +1,4 @@
-// 1. Clase Servicio
+// 1. Clase para definir la estructura de tus servicios
 class Servicio {
     constructor(id, nombre, precio) {
         this.id = id;
@@ -7,99 +7,90 @@ class Servicio {
     }
 }
 
-// 2. Catálogo
-const catalogo = [
-    new Servicio(1, "Emailing Estratégico", 2500),
-    new Servicio(2, "Diseño UX/UI", 5000),
-    new Servicio(3, "Data Strategy", 4500),
-    new Servicio(4, "AI Automation", 6000)
-];
-
-// 3. LocalStorage
+// 2. Variables de estado
+let catalogo = []; 
 let carrito = JSON.parse(localStorage.getItem("carrito_akku")) || [];
 
-// 4. DOM
+// 3. Referencias al DOM (estos IDs deben coincidir con tu index.html)
 const contenedorServicios = document.getElementById("contenedor-servicios");
 const listaCarrito = document.getElementById("lista-carrito");
 const precioTotal = document.getElementById("precio-total");
 const btnVaciar = document.getElementById("btn-vaciar");
 
-// 5. Renderizar servicios
+// 4. CARGA ASÍNCRONA: El corazón de tu proyecto final
+async function cargarDatos() {
+    try {
+        // Buscamos los datos en el archivo servicios.json
+        const response = await fetch('./servicios.json');
+        const data = await response.json();
+        
+        // Llenamos el catálogo con objetos de la clase Servicio
+        catalogo = data.map(s => new Servicio(s.id, s.nombre, s.precio));
+        
+        // Una vez que tenemos los datos, dibujamos la interfaz
+        renderizarServicios();
+        actualizarInterfaz();
+    } catch (error) {
+        console.error("Error al conectar con los datos:", error);
+    }
+}
+
+// 5. Renderizado dinámico de servicios
 function renderizarServicios() {
     contenedorServicios.innerHTML = "";
-
     catalogo.forEach(servicio => {
         const div = document.createElement("div");
-        div.classList.add("tarjeta-servicio");
-
-        const boton = document.createElement("button");
-        boton.textContent = "Agregar";
-        boton.addEventListener("click", () => agregarAlCarrito(servicio.id));
-
+        div.className = "tarjeta-servicio";
         div.innerHTML = `
             <h3>${servicio.nombre}</h3>
             <p>$${servicio.precio}</p>
+            <button onclick="agregarAlCarrito(${servicio.id})">Agregar</button>
         `;
-
-        div.appendChild(boton);
         contenedorServicios.appendChild(div);
     });
 }
 
-// 6. Agregar al carrito
-function agregarAlCarrito(id) {
-    const servicio = catalogo.find(s => s.id === id);
-    carrito.push(servicio);
+// 6. Lógica del Carrito
+window.agregarAlCarrito = (id) => {
+    const item = catalogo.find(s => s.id === id);
+    carrito.push(item);
     actualizarInterfaz();
-}
+};
 
-// 7. Eliminar
 function eliminarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarInterfaz();
 }
 
-// 8. Actualizar interfaz
 function actualizarInterfaz() {
     listaCarrito.innerHTML = "";
-
     carrito.forEach((item, index) => {
         const li = document.createElement("li");
-
-        const span = document.createElement("span");
-        span.textContent = `${item.nombre} - $${item.precio}`;
-
-        const botonEliminar = document.createElement("button");
-        botonEliminar.textContent = "❌";
-        botonEliminar.classList.add("btn-borrar");
-        botonEliminar.addEventListener("click", () => eliminarDelCarrito(index));
-
-        li.appendChild(span);
-        li.appendChild(botonEliminar);
+        li.innerHTML = `
+            ${item.nombre} - $${item.precio} 
+            <button class="btn-borrar" onclick="eliminarDelCarrito(${index})">❌</button>
+        `;
         listaCarrito.appendChild(li);
     });
 
-    const totalBase = carrito.reduce((acc, s) => acc + s.precio, 0);
-
-    if (totalBase > 8000) {
-        const totalConDescuento = totalBase * 0.85;
-        precioTotal.innerHTML = `
-            Subtotal: $${totalBase} <br>
-            <strong>Total con Bonificación (15%): $${totalConDescuento.toFixed(2)}</strong>
-        `;
+    const total = carrito.reduce((acc, s) => acc + s.precio, 0);
+    
+    // Aplicamos bonificación si el monto es alto (Lógica de negocio)
+    if (total > 8000) {
+        const bonificado = total * 0.85;
+        precioTotal.innerHTML = `Total: <del>$${total}</del> <strong>$${bonificado.toFixed(2)} (15% OFF)</strong>`;
     } else {
-        precioTotal.textContent = `Total: $${totalBase}`;
+        precioTotal.textContent = `Total: $${total}`;
     }
 
     localStorage.setItem("carrito_akku", JSON.stringify(carrito));
 }
 
-// 9. Vaciar carrito
+// 7. Eventos
 btnVaciar.addEventListener("click", () => {
     carrito = [];
     actualizarInterfaz();
 });
 
-// 10. Inicializar
-renderizarServicios();
-actualizarInterfaz();
+// 8. ¡Arrancamos el simulador!
+cargarDatos();
